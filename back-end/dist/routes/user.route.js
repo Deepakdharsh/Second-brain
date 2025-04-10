@@ -9,9 +9,9 @@ const user_controller_1 = require("../controller/user.controller");
 const UserRouter = express_1.default.Router();
 exports.UserRouter = UserRouter;
 //@ts-ignore
-UserRouter.post("/login", user_controller_1.login);
-//@ts-ignore
 UserRouter.post("/signup", user_controller_1.signup);
+//@ts-ignore
+UserRouter.post("/login", user_controller_1.login);
 //@ts-ignore
 UserRouter.post("/content", user_controller_1.createContent);
 //@ts-ignore

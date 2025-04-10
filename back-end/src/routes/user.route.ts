@@ -3,9 +3,9 @@ import { login,signup,createContent,getContent,deleteContent,createLink,shareLin
 
 const UserRouter=express.Router()
 //@ts-ignore
-UserRouter.post("/login",login)
-//@ts-ignore
 UserRouter.post("/signup",signup)
+//@ts-ignore
+UserRouter.post("/login",login)
 //@ts-ignore
 UserRouter.post("/content",createContent)
 //@ts-ignore
