@@ -3,6 +3,7 @@ import bcrypt from "bcrypt"
 import z from "zod"
 import { User } from "../models/user.model"
 import jwt from "jsonwebtoken"
+import { Content } from "../models/content.model"
 
 export const signup=async(req:Request,res:Response)=>{
     //@ts-ignore
@@ -92,19 +93,88 @@ export const login=async(req:Request,res:Response)=>{
       })
 }
 
-export const createContent=(req:Request,res:Response)=>{
-    console.log("hello")
-    res.send("hello this from createContent controller")
+export const createContent=async(req:Request,res:Response)=>{
+      //@ts-ignore
+      const userId=req.userId
+      //@ts-ignore
+      const {link,type,tags,title}=req.body
+
+      const schema=z.object({
+          link:z.string(),
+          type:z.string(),
+          title:z.string(),
+          tags:z.array(z.string())
+      })
+  
+      const {data,error}=schema.safeParse({
+          link,
+          type,
+          title,
+          tags
+      })
+  
+      if(error){
+          console.log(error)
+          return res.status(411).json({message:"invaild inputs"})
+      }
+  
+      const content=await Content.create({
+        title:data.title,
+        link:data.link,
+        type:data.type,
+        tags:data.tags,
+        userId:userId
+      })
+  
+      res.status(201).json({
+          message:"content created",
+          content
+      })
 }
 
-export const getContent=(req:Request,res:Response)=>{
-    console.log("hello")
-    res.send("hello this from getContent controller")
+export const getContent=async(req:Request,res:Response)=>{
+    //@ts-ignore
+    const userId=req.userId
+
+    const contents=await Content.find({userId})
+
+    if(!contents){
+        return res.status(401).json({
+            message:"Not found"
+        })
+    }
+
+    res.status(201).json({
+        message:"match found",
+        contents
+    })
 }
 
-export const deleteContent=(req:Request,res:Response)=>{
-    console.log("hello")
-    res.send("hello this from deleteContent controller")
+export const deleteContent=async(req:Request,res:Response)=>{
+    //@ts-ignore
+    const userId=req.userId
+    //@ts-ignore
+    const {contentId}=req.body
+
+    const schema=z.object({
+        contentId:z.string(),
+    })
+
+    const {data,error}=schema.safeParse({
+        contentId
+    })
+
+    if(error){
+        console.log(error)
+        return res.status(411).json({message:"invaild inputs"})
+    }
+
+    const deleteContent=await Content.deleteOne({userId,contentId})
+
+    res.status(201).json({
+        message:"content deleted",
+        deleteContent
+    })
 }
 
 export const createLink=(req:Request,res:Response)=>{

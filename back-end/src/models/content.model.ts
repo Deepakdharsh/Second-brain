@@ -3,6 +3,10 @@ const ObjectId=mongoose.Schema.Types.ObjectId
 const Schema=mongoose.Schema
 
 const ContentSchema=new Schema({
+    title:{
+        type:String,
+        required:true
+    },
     link:{
         type:String,
         required:true
