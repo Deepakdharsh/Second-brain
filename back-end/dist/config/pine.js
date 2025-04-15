@@ -12,32 +12,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
+exports.initPine = exports.indexName = exports.pc = void 0;
+const pinecone_1 = require("@pinecone-database/pinecone");
 const dotenv_1 = __importDefault(require("dotenv"));
-const db_1 = require("./config/db");
-const user_route_1 = require("./routes/user.route");
-const pine_1 = require("./config/pine");
 dotenv_1.default.config();
-const app = (0, express_1.default)();
-app.use(express_1.default.json());
-// app.use(cors({
-//     origin:["http://localhost:5173"]
-// }))
-app.use("/api/v1", user_route_1.UserRouter);
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield (0, db_1.db)();
-            yield (0, pine_1.initPine)();
-            app.listen(process.env.PORT, () => {
-                console.log(process.env.HF + ' ' + "hello from HF");
-                console.log(`server is running on port:${process.env.PORT} and your DB is connected`);
-            });
-        }
-        catch (error) {
-            //@ts-ignore
-            console.log(error.message);
-        }
-    });
-}
-main();
+// interface {
+// }
+exports.pc = new pinecone_1.Pinecone({
+    apiKey: "pcsk_62TRNo_SWbfbrsB34sb9gu7Gk19vLpYCgjyY1R1ptZhaEPbmLUNUZZLxU2YNwr9K2Yxmci"
+    // apiKey:process.env.PINECONE_API_KEY
+});
+exports.indexName = 'quickstart';
+const initPine = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield exports.pc.createIndex({
+            name: exports.indexName,
+            dimension: 384, // Replace with your model dimensions
+            metric: 'cosine', // Replace with your model metric
+            spec: {
+                serverless: {
+                    cloud: 'aws',
+                    region: 'us-east-1'
+                }
+            }
+        });
+    }
+    catch (error) {
+        //@ts-ignore
+        console.log(error.message);
+    }
+});
+exports.initPine = initPine;
