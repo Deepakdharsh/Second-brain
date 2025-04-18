@@ -23,10 +23,10 @@ function Button(props:buttonProps) {
         "lg":"p-6 py-3"
     }
 
-    const defaultStyles="rounded-md"
+    const defaultStyles="rounded-md flex"
 
   return (
-        <button className={`${variantStyles[props.variant]} ${sizeStyles[props.size]} ${defaultStyles} bg-purple-300`}>{props.text}</button>
+        <button className={`${variantStyles[props.variant]} ${sizeStyles[props.size]} ${defaultStyles} bg-purple-300`}>{props.startIcon} {props.text} {props.endIcon}</button>
   )
 }
 
