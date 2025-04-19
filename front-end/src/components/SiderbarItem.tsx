@@ -1,8 +1,13 @@
-import React from 'react'
+import React,{ReactElement} from 'react'
 
-function SiderbarItem() {
+interface siderBarItem{
+  startIcon:ReactElement,
+  title:string
+}
+
+function SiderbarItem({startIcon,title}:siderBarItem) {
   return (
-    <div>SiderbarItem</div>
+    <div className='bg-grey-400 p-2 m-1 rounded-sm flex items-center'><span className='mr-2'>{startIcon}</span> {title}</div>
   )
 }
 
