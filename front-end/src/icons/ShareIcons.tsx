@@ -1,5 +1,5 @@
 import React from "react";
-import { IconProps, inconsSizeVariants } from ".";
+import { IconProps, inconsSizeVariants } from "./ButtonType";
 
 const ShareIcons = (props:IconProps) => {
   return (
