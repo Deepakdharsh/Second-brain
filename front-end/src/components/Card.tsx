@@ -1,5 +1,7 @@
 import React from 'react'
 import ShareIcons from '../icons/ShareIcons'
+import CopyIcon from '../icons/CopyIcon'
+import DeleteIcon from '../icons/DeleteIcon'
 
 interface card{
   title?:string,
@@ -9,11 +11,11 @@ interface card{
 
 function Card({title,type="youtube",link}:card) {
   return (
-    <div className='max-w-70 bg-white border  border-grey-200  shadow-md rounded-sm min-h-64 p-5'>
+    <div className='flex-[1] min-w-60 max-w-70 bg-white border border-gray-300  shadow-md rounded-sm min-h-64 p-5'>
       <div className='flex justify-between'>
       <div className='flex items-center '>
        <span className='mr-3'>
-      {<ShareIcons size='md'/>}
+      {<CopyIcon />}
        </span>
       Project Ideas
       </div>
@@ -21,7 +23,7 @@ function Card({title,type="youtube",link}:card) {
         <span className='mr-2'>
       {<ShareIcons size='md'/>}
         </span>
-      {<ShareIcons size='md'/>}
+      {<DeleteIcon />}
       </div>
       </div>
       <div className='mt-4'>
