@@ -2,9 +2,9 @@ import React from 'react'
 import ShareIcons from '../icons/ShareIcons'
 
 interface card{
-  title:string,
-  type:"youtube"|"tweeter"|"text",
-  link:string
+  title?:string,
+  type?:"youtube"|"tweeter"|"text",
+  link?:string
 }
 
 function Card({title,type="youtube",link}:card) {

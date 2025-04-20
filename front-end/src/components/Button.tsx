@@ -26,7 +26,7 @@ function Button(props:buttonProps) {
     const defaultStyles="rounded-md  flex items-center "
 
   return (
-        <button className={`${variantStyles[props.variant]} ${sizeStyles[props.size]} ${defaultStyles}`}><span className='mr-2'>{props.startIcon}</span>
+        <button onClick={props.onClick} className={`${variantStyles[props.variant]} ${sizeStyles[props.size]} ${defaultStyles}`}><span className='mr-2'>{props.startIcon}</span>
         {props.text} {props.endIcon}</button>
   )
 }
