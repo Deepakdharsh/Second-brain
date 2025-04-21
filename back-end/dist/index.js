@@ -30,7 +30,6 @@ function main() {
             yield (0, db_1.db)();
             yield (0, pine_1.initPine)();
             app.listen(process.env.PORT, () => {
-                console.log(process.env.HF + ' ' + "hello from HF");
                 console.log(`server is running on port:${process.env.PORT} and your DB is connected`);
             });
         }

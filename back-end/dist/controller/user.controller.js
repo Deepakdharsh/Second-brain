@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.shareLink = exports.createLink = exports.deleteContent = exports.getContent = exports.createContent = exports.createTag = exports.login = exports.signup = void 0;
+exports.LinkShare = exports.createLink = exports.deleteContent = exports.getContent = exports.createContent = exports.createTag = exports.login = exports.signup = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const zod_1 = __importDefault(require("zod"));
 const user_model_1 = require("../models/user.model");
@@ -174,7 +174,8 @@ const deleteContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         console.log(error);
         return res.status(411).json({ message: "invaild inputs" });
     }
-    const deleteContent = yield content_model_1.Content.deleteOne({ userId, contentId });
+    const deleteContent = yield content_model_1.Content.deleteOne({ userId, _id: contentId });
+    console.log(deleteContent);
     res.status(201).json({
         message: "content deleted",
         deleteContent
@@ -213,12 +214,14 @@ const createLink = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     });
 });
 exports.createLink = createLink;
-const shareLink = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //@ts-ignore
+const LinkShare = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const { sharelink } = req.params;
+    //@ts-ignore
+    // console.log(req.sharelink)
+    console.log(sharelink);
     const schema = zod_1.default.object({
-        sharelink: zod_1.default.boolean(),
+        sharelink: zod_1.default.string(),
     });
     const { data, error } = schema.safeParse({
         sharelink
@@ -227,12 +230,13 @@ const shareLink = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(error);
         return res.status(404).json({ message: "Page not found" });
     }
-    const user = yield link_model_1.Link.findOne({ hash: exports.shareLink }).populate("userId");
+    // const user=await Link.findOne({hash:shareLink}).populate("userId")
+    const user = yield link_model_1.Link.findOne({ hash: sharelink });
     console.log(user);
     //@ts-ignore
-    const contents = yield content_model_1.Content.find({ email: user.email });
+    const contents = yield content_model_1.Content.find({ userId: user.userId });
     res.status(201).json({
         contents
     });
 });
-exports.shareLink = shareLink;
+exports.LinkShare = LinkShare;

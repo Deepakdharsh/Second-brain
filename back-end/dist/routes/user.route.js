@@ -27,4 +27,4 @@ UserRouter.delete("/content", auth_middleware_1.auth, user_controller_1.deleteCo
 //@ts-ignore
 UserRouter.post("/brain/share", auth_middleware_1.auth, user_controller_1.createLink);
 //@ts-ignore
-UserRouter.get("/brain/:sharelink", user_controller_1.shareLink);
+UserRouter.get("/brain/:sharelink", user_controller_1.LinkShare);

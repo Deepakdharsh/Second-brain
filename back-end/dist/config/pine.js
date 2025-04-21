@@ -25,17 +25,17 @@ exports.pc = new pinecone_1.Pinecone({
 exports.indexName = 'quickstart';
 const initPine = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield exports.pc.createIndex({
-            name: exports.indexName,
-            dimension: 384, // Replace with your model dimensions
-            metric: 'cosine', // Replace with your model metric
-            spec: {
-                serverless: {
-                    cloud: 'aws',
-                    region: 'us-east-1'
-                }
-            }
-        });
+        // await pc.createIndex({
+        // name: indexName,
+        // dimension: 384, // Replace with your model dimensions
+        // metric: 'cosine', // Replace with your model metric
+        // spec: { 
+        //     serverless: { 
+        //     cloud: 'aws', 
+        //     region: 'us-east-1' 
+        //     }
+        // } 
+        // });
     }
     catch (error) {
         //@ts-ignore

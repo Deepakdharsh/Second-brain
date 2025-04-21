@@ -1,5 +1,5 @@
 import express from "express"
-import { login,signup,createContent,getContent,deleteContent,createLink,shareLink, createTag } from "../controller/user.controller"
+import { login,signup,createContent,getContent,deleteContent,createLink,createTag,LinkShare } from "../controller/user.controller"
 import { auth } from "../middlewares/auth.middleware"
 import { rag } from "../controller/rag.controller"
 
@@ -21,6 +21,6 @@ UserRouter.delete("/content",auth,deleteContent)
 //@ts-ignore
 UserRouter.post("/brain/share",auth,createLink)
 //@ts-ignore
-UserRouter.get("/brain/:sharelink",shareLink)
+UserRouter.get("/brain/:sharelink",LinkShare)
 
 export { UserRouter }

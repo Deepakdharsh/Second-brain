@@ -197,7 +197,9 @@ export const deleteContent=async(req:Request,res:Response)=>{
         return res.status(411).json({message:"invaild inputs"})
     }
 
-    const deleteContent=await Content.deleteOne({userId,contentId})
+    const deleteContent=await Content.deleteOne({userId,_id:contentId})
+
+    console.log(deleteContent)
 
     res.status(201).json({
         message:"content deleted",
@@ -244,13 +246,15 @@ export const createLink=async(req:Request,res:Response)=>{
     })
 }
 
-export const shareLink=async(req:Request,res:Response)=>{
-    //@ts-ignore
+export const LinkShare=async(req:Request,res:Response)=>{
     //@ts-ignore
     const {sharelink}=req.params
+    //@ts-ignore
+    // console.log(req.sharelink)
+    console.log(sharelink)
 
     const schema=z.object({
-        sharelink:z.boolean(),
+        sharelink:z.string(),
     })
 
     const {data,error}=schema.safeParse({
@@ -262,12 +266,13 @@ export const shareLink=async(req:Request,res:Response)=>{
         return res.status(404).json({message:"Page not found"})
     }
 
-    const user=await Link.findOne({hash:shareLink}).populate("userId")
+    // const user=await Link.findOne({hash:shareLink}).populate("userId")
+    const user=await Link.findOne({hash:sharelink})
 
     console.log(user)
 
     //@ts-ignore
-    const contents=await Content.find({email:user.email})
+    const contents=await Content.find({userId:user.userId})
 
     res.status(201).json({
         contents

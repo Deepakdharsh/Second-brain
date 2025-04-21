@@ -9,9 +9,6 @@ const inference = new HfInference(val?.trim())
 
 export const rag=async(req:Request,res:Response)=>{
     try {
-        console.log(process.env.HF+""+"someONe")
-        console.log(typeof process.env.HF)
-        console.log("hello from rag")
         //@ts-ignore
         const {text}=req.body
         

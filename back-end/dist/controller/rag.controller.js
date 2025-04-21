@@ -21,9 +21,6 @@ const val = process.env.HF;
 const inference = new inference_1.HfInference(val === null || val === void 0 ? void 0 : val.trim());
 const rag = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(process.env.HF + "" + "someONe");
-        console.log(typeof process.env.HF);
-        console.log("hello from rag");
         //@ts-ignore
         const { text } = req.body;
         const output = yield inference.featureExtraction({
