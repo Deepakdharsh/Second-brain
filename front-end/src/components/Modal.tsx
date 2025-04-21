@@ -2,6 +2,12 @@ import React, { useRef } from 'react'
 import CloseIcon from '../icons/CloseIcon'
 import Input from './Input'
 
+// interface ModalType {
+//     isToggle:boolean,
+//     handleToggle:()=>void
+// }
+
+//@ts-ignore
 function Modal({isToggle,handleToggle}):any {
     const inputRef=useRef<HTMLInputElement>(null)
 
