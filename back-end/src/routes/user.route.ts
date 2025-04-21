@@ -1,5 +1,5 @@
 import express from "express"
-import { login,signup,createContent,getContent,deleteContent,createLink,shareLink } from "../controller/user.controller"
+import { login,signup,createContent,getContent,deleteContent,createLink,shareLink, createTag } from "../controller/user.controller"
 import { auth } from "../middlewares/auth.middleware"
 import { rag } from "../controller/rag.controller"
 
@@ -14,6 +14,8 @@ UserRouter.post("/login",login)
 UserRouter.post("/content",auth,createContent)
 //@ts-ignore
 UserRouter.get("/content",auth,getContent)
+//@ts-ignore
+UserRouter.post("/tag",auth,createTag)
 //@ts-ignore
 UserRouter.delete("/content",auth,deleteContent)
 //@ts-ignore

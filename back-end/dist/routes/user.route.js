@@ -21,6 +21,8 @@ UserRouter.post("/content", auth_middleware_1.auth, user_controller_1.createCont
 //@ts-ignore
 UserRouter.get("/content", auth_middleware_1.auth, user_controller_1.getContent);
 //@ts-ignore
+UserRouter.post("/tag", auth_middleware_1.auth, user_controller_1.createTag);
+//@ts-ignore
 UserRouter.delete("/content", auth_middleware_1.auth, user_controller_1.deleteContent);
 //@ts-ignore
 UserRouter.post("/brain/share", auth_middleware_1.auth, user_controller_1.createLink);

@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken"
 import { Content } from "../models/content.model"
 import { random } from "../utils/randomString"
 import { Link } from "../models/link.model"
+import { Tag } from "../models/tags.model"
 
 export const signup=async(req:Request,res:Response)=>{
     //@ts-ignore
@@ -86,13 +87,36 @@ export const login=async(req:Request,res:Response)=>{
       }
 
       //@ts-ignore
-      const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET)
+      const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
   
       res.status(201).json({
           message:"user created",
           user:user,
           token
       })
+}
+
+export const createTag=async(req:Request,res:Response)=>{
+    //@ts-ignore
+    const {title}=req.body 
+
+    const schema=z.object({
+        title:z.string()
+    })
+
+    const {data,error}=schema.safeParse({title})
+
+    console.log(data)
+    
+    if(error){
+        return res.json(411).json({message:"invaild inputs"})
+    }
+
+    const tag=await Tag.create({title:data.title})
+
+    res.status(201).json({
+        tag
+    })
 }
 
 export const createContent=async(req:Request,res:Response)=>{
@@ -114,6 +138,8 @@ export const createContent=async(req:Request,res:Response)=>{
           title,
           tags
       })
+
+      console.log(data)
   
       if(error){
           console.log(error)
@@ -138,7 +164,7 @@ export const getContent=async(req:Request,res:Response)=>{
     //@ts-ignore
     const userId=req.userId
 
-    const contents=await Content.find({userId})
+    const contents=await Content.find({userId}).populate({path:"tags",select:"title"})
 
     if(!contents){
         return res.status(401).json({

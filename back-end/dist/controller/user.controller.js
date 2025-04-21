@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.shareLink = exports.createLink = exports.deleteContent = exports.getContent = exports.createContent = exports.login = exports.signup = void 0;
+exports.shareLink = exports.createLink = exports.deleteContent = exports.getContent = exports.createContent = exports.createTag = exports.login = exports.signup = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const zod_1 = __importDefault(require("zod"));
 const user_model_1 = require("../models/user.model");
@@ -20,6 +20,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const content_model_1 = require("../models/content.model");
 const randomString_1 = require("../utils/randomString");
 const link_model_1 = require("../models/link.model");
+const tags_model_1 = require("../models/tags.model");
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const { username, email, password } = req.body;
@@ -83,7 +84,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     //@ts-ignore
-    const token = jsonwebtoken_1.default.sign({ id: newUser._id }, process.env.JWT_SECRET);
+    const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET);
     res.status(201).json({
         message: "user created",
         user: user,
@@ -91,6 +92,23 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 exports.login = login;
+const createTag = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //@ts-ignore
+    const { title } = req.body;
+    const schema = zod_1.default.object({
+        title: zod_1.default.string()
+    });
+    const { data, error } = schema.safeParse({ title });
+    console.log(data);
+    if (error) {
+        return res.json(411).json({ message: "invaild inputs" });
+    }
+    const tag = yield tags_model_1.Tag.create({ title: data.title });
+    res.status(201).json({
+        tag
+    });
+});
+exports.createTag = createTag;
 const createContent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const userId = req.userId;
@@ -108,6 +126,7 @@ const createContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         title,
         tags
     });
+    console.log(data);
     if (error) {
         console.log(error);
         return res.status(411).json({ message: "invaild inputs" });
@@ -128,7 +147,7 @@ exports.createContent = createContent;
 const getContent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const userId = req.userId;
-    const contents = yield content_model_1.Content.find({ userId });
+    const contents = yield content_model_1.Content.find({ userId }).populate({ path: "tags", select: "title" });
     if (!contents) {
         return res.status(401).json({
             message: "Not found"
