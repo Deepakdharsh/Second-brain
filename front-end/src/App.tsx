@@ -12,6 +12,7 @@ function App() {
         <Route path='/signup' element={<Signup/>}/>
         <Route path='/signin' element={<SignIn/>}/>
         <Route path='/dashboard' element={<DashBoard/>}/>
+        <Route path='/*' element={<div>Page not foud</div>}/>
       </Routes>
     </Router>
   )
