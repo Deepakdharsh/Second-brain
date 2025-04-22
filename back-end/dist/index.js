@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const db_1 = require("./config/db");
 const user_route_1 = require("./routes/user.route");
@@ -20,9 +21,9 @@ const pine_1 = require("./config/pine");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-// app.use(cors({
-//     origin:["http://localhost:5173"]
-// }))
+app.use((0, cors_1.default)({
+    origin: ["http://localhost:5173"]
+}));
 app.use("/api/v1", user_route_1.UserRouter);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
