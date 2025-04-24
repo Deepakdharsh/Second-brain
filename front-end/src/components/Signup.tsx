@@ -5,6 +5,8 @@ const ForwardRef=React.forwardRef(Input)
 
 function Signup() {
   const usernameRef=useRef<HTMLInputElement>(null)
+  const emailRef=useRef<HTMLInputElement>(null)
+  const passwordRef=useRef<HTMLInputElement>(null)
   function handleSubmit(){
     console.log(usernameRef.current?.value)
   }
