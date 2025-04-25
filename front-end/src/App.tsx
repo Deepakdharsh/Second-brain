@@ -31,6 +31,5 @@ interface auxProps{
 
 function AuthRoute({children}:auxProps){
   const token=localStorage.getItem("token")  
-  console.log(token)
   return token ? children : <Navigate to="/signin" replace/>
 }

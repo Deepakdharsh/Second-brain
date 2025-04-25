@@ -13,15 +13,15 @@ function Input({placeholder,type="text",isTag}:input,ref:React.Ref<HTMLInputElem
     useEffect(()=>{
         //@ts-ignore
         ref.current.value=""
+        console.log(value)
+        ref.addedtags=value
     },[value])
-
+    
     function handleAdd(){
         //@ts-ignore
         if(!ref.current?.value) return 
-            //@ts-ignore
-        setValue(state=>[...state,ref.current.value])
         //@ts-ignore
-        ref.addedtags=value
+        setValue(state=>[...state,ref.current.value])
     }
     return (
         <>

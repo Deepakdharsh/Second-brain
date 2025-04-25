@@ -32,14 +32,16 @@ function Modal({isToggle,handleToggle}):any {
 
     function handleSubmit(){
         //@ts-ignore
-        const link= typeRef.current?.value === "youtube"? linkRef.current?.value.replace("watch?v=","embed/") : linkRef.current?.value.replace("x.com","twitter.com")
-        mutation.mutate({
-            title:titletRef.current?.value,
-            link,
-            type:typeRef.current?.value,
-            //@ts-ignore
-            tag:tagRef?.addedtags
-        })
+        console.log(tagRef?.addedtags)
+        //@ts-ignore
+        // const link= typeRef.current?.value === "youtube"? linkRef.current?.value.replace("watch?v=","embed/") : linkRef.current?.value.replace("x.com","twitter.com")
+        // mutation.mutate({
+        //     title:titletRef.current?.value,
+        //     link,
+        //     type:typeRef.current?.value,
+        //     //@ts-ignore
+        //     tag:tagRef?.addedtags
+        // })
     }
 
   return (
