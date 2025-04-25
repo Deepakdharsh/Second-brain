@@ -17,6 +17,8 @@ UserRouter.post("/signup", user_controller_1.signup);
 //@ts-ignore
 UserRouter.post("/login", user_controller_1.login);
 //@ts-ignore
+UserRouter.post("/refresh", user_controller_1.refresh);
+//@ts-ignore
 UserRouter.post("/content", auth_middleware_1.auth, user_controller_1.createContent);
 //@ts-ignore
 UserRouter.get("/content", auth_middleware_1.auth, user_controller_1.getContent);

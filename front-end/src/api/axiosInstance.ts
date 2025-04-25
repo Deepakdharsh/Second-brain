@@ -5,7 +5,7 @@ export const api=axios.create({
     withCredentials:true
 })
 
-//@ts-ignore
+//@ts-expect-error headers-failed
 api.interceptors.request.use(async(config)=>{
     if(config.url?.includes("/login") || config.url?.includes("/signup")){
         return config
@@ -33,7 +33,7 @@ api.interceptors.request.use(async(config)=>{
     Promise.reject(error)
 })
 
-//@ts-ignore
+//@ts-expect-error headers-failed
 api.interceptors.response.use((response)=>response,async(error)=>{
     const orginalRequest=error.config
     if(error.response.status===401&&!orginalRequest){

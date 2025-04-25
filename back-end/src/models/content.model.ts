@@ -13,7 +13,7 @@ const ContentSchema=new Schema({
     },
     type:{
         type:String,
-        enum:["image","video","article","audio","youtube","tweeter"],
+        enum:["image","video","article","audio","youtube","twitter"],
         required:true
     },
     tags:[{type:ObjectId,ref:"Tag"}],

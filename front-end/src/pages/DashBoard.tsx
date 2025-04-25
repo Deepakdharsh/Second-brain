@@ -36,7 +36,6 @@ function DashBoard() {
       <Card/>
       </div>
       </div>
-      <SignIn/>
    </div>
   )
 }

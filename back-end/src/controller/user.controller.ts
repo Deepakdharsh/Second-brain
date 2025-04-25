@@ -12,6 +12,8 @@ export const signup=async(req:Request,res:Response)=>{
     //@ts-ignore
     const {username,email,password}=req.body
 
+    console.log(req.body)
+
     const schema=z.object({
         username:z.string(),
         email:z.string(),
@@ -66,6 +68,8 @@ export const login=async(req:Request,res:Response)=>{
       //@ts-ignore
       const {email,password}=req.body
 
+      console.log(req.body)
+
       const schema=z.object({
           email:z.string(),
           password:z.string()
@@ -119,6 +123,7 @@ interface jwtRequest extends Request{
 }
 
 export const refresh=async(req:jwtRequest,res:Response)=>{
+    console.log("hello from refresh")
  const refreshToken=req.cookies.refreshToken
  if(!refreshToken){
     return res.status(401).json({message:"No refresh token"})
@@ -165,6 +170,8 @@ export const createContent=async(req:Request,res:Response)=>{
       //@ts-ignore
       const {link,type,tags,title}=req.body
 
+    console.log(req.body)
+
       const schema=z.object({
           link:z.string(),
           type:z.string(),
@@ -179,6 +186,12 @@ export const createContent=async(req:Request,res:Response)=>{
           tags
       })
 
+      let tag=await Tag.findOne({title})
+
+      if(!tag){
+        tag=await Tag.create({title})
+      }
+
       console.log(data)
   
       if(error){
@@ -190,9 +203,11 @@ export const createContent=async(req:Request,res:Response)=>{
         title:data.title,
         link:data.link,
         type:data.type,
-        tags:data.tags,
+        tags:tag._id,
         userId:userId
       })
+
+      console.log(content)
   
       res.status(201).json({
           message:"content created",

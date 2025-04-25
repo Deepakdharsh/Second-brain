@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LinkShare = exports.createLink = exports.deleteContent = exports.getContent = exports.createContent = exports.createTag = exports.login = exports.signup = void 0;
+exports.LinkShare = exports.createLink = exports.deleteContent = exports.getContent = exports.createContent = exports.createTag = exports.refresh = exports.login = exports.signup = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const zod_1 = __importDefault(require("zod"));
 const user_model_1 = require("../models/user.model");
@@ -24,6 +24,7 @@ const tags_model_1 = require("../models/tags.model");
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const { username, email, password } = req.body;
+    console.log(req.body);
     const schema = zod_1.default.object({
         username: zod_1.default.string(),
         email: zod_1.default.string(),
@@ -48,8 +49,14 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         email: data.email,
         password: hashedPassword,
     });
-    //@ts-ignore
-    const token = jsonwebtoken_1.default.sign({ id: newUser._id }, process.env.JWT_SECRET);
+    // const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET,{expiresIn:""})
+    const token = jsonwebtoken_1.default.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
+    const refreshToken = jsonwebtoken_1.default.sign({ id: newUser._id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV == "production" ? true : false,
+        sameSite: "strict"
+    });
     res.status(200).json({
         message: "user created",
         user: newUser,
@@ -60,6 +67,7 @@ exports.signup = signup;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const { email, password } = req.body;
+    console.log(req.body);
     const schema = zod_1.default.object({
         email: zod_1.default.string(),
         password: zod_1.default.string()
@@ -84,7 +92,14 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     //@ts-ignore
-    const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET);
+    //   const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
+    const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
+    const refreshToken = jsonwebtoken_1.default.sign({ id: user._id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV == "production" ? true : false,
+        sameSite: "strict"
+    });
     res.status(201).json({
         message: "user created",
         user: user,
@@ -92,6 +107,24 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 exports.login = login;
+const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("hello from refresh");
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+        return res.status(401).json({ message: "No refresh token" });
+    }
+    jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({
+                message: "Invaild refresh token"
+            });
+        }
+        //@ts-ignore
+        const token = jsonwebtoken_1.default.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "15m" });
+        res.json({ token });
+    });
+});
+exports.refresh = refresh;
 const createTag = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const { title } = req.body;
@@ -114,6 +147,7 @@ const createContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const userId = req.userId;
     //@ts-ignore
     const { link, type, tags, title } = req.body;
+    console.log(req.body);
     const schema = zod_1.default.object({
         link: zod_1.default.string(),
         type: zod_1.default.string(),
@@ -126,6 +160,10 @@ const createContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         title,
         tags
     });
+    let tag = yield tags_model_1.Tag.findOne({ title });
+    if (!tag) {
+        tag = yield tags_model_1.Tag.create({ title });
+    }
     console.log(data);
     if (error) {
         console.log(error);
@@ -135,9 +173,10 @@ const createContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         title: data.title,
         link: data.link,
         type: data.type,
-        tags: data.tags,
+        tags: tag._id,
         userId: userId
     });
+    console.log(content);
     res.status(201).json({
         message: "content created",
         content
