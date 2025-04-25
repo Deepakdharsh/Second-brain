@@ -6,6 +6,8 @@ import Sidebar from '../components/Sidebar'
 import AddIcon from '../icons/AddIcon'
 import ShareIcons from '../icons/ShareIcons'
 import SignIn from '../components/SignIn'
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
+import { GetContent } from '../api/endPoints'
 
 function DashBoard() {
   const [isToggle,SetIsToggle]=useState(false)
@@ -13,6 +15,10 @@ function DashBoard() {
     SetIsToggle(state=>!state)
     console.log("hello from state")
   }
+  const queryClient=useQueryClient()
+
+  const {data,isLoading,isError}=useQuery({queryKey:["content"],queryFn:GetContent})
+  
   return (
     <div className='bg-gray-100 '>
       <Modal isToggle={isToggle} handleToggle={handleToggle}/>

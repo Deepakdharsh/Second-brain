@@ -23,7 +23,7 @@ function Modal({isToggle,handleToggle}):any {
         mutationFn:PostContent,
         onSuccess:(data)=>{
             console.log("added content")
-            navigate("/dashboard")
+            isToggle=false
         },
         onError:(error)=>{
             console.log(error)
@@ -34,14 +34,14 @@ function Modal({isToggle,handleToggle}):any {
         //@ts-ignore
         console.log(tagRef?.addedtags)
         //@ts-ignore
-        // const link= typeRef.current?.value === "youtube"? linkRef.current?.value.replace("watch?v=","embed/") : linkRef.current?.value.replace("x.com","twitter.com")
-        // mutation.mutate({
-        //     title:titletRef.current?.value,
-        //     link,
-        //     type:typeRef.current?.value,
-        //     //@ts-ignore
-        //     tag:tagRef?.addedtags
-        // })
+        const link= typeRef.current?.value === "youtube"? linkRef.current?.value.replace("watch?v=","embed/") : linkRef.current?.value.replace("x.com","twitter.com")
+        mutation.mutate({
+            title:titletRef.current?.value,
+            link,
+            type:typeRef.current?.value,
+            //@ts-ignore
+            tags:tagRef?.addedtags
+        })
     }
 
   return (

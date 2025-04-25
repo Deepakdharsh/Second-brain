@@ -123,7 +123,6 @@ interface jwtRequest extends Request{
 }
 
 export const refresh=async(req:jwtRequest,res:Response)=>{
-    console.log("hello from refresh")
  const refreshToken=req.cookies.refreshToken
  if(!refreshToken){
     return res.status(401).json({message:"No refresh token"})
