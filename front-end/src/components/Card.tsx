@@ -9,7 +9,7 @@ interface card{
   link?:string
 }
 
-function Card({title,type="youtube",link}:card) {
+function Card({title,type,link}:card) {
   return (
     <div className='flex-[1] min-w-60 max-w-70 bg-white border border-gray-300  shadow-md rounded-sm min-h-64 p-5'>
       <div className='flex justify-between'>
@@ -17,7 +17,7 @@ function Card({title,type="youtube",link}:card) {
        <span className='mr-3'>
       {<CopyIcon />}
        </span>
-      Project Ideas
+      {title}
       </div>
       <div className='flex items-center'>
         <span className='mr-2'>
@@ -28,12 +28,12 @@ function Card({title,type="youtube",link}:card) {
       </div>
       <div className='mt-4'>
         {
-          type === "youtube" && <iframe className='w-full rounded-md' src="https://www.youtube.com/embed/jGUuqugL1wI?si=E682Ev8jFhDDOmHi" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+          type === "youtube" && <iframe className='w-full rounded-md' src={link} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         }
         {/* https://www.youtube.com/watch?v=jGUuqugL1wI */}
      
         {
-          type === "tweeter" && <blockquote className="twitter-tweet">
+          type === "twitter" && <blockquote className="twitter-tweet">
           <a href="https://twitter.com/username/status/807811447862468608"></a> 
         </blockquote>
         }

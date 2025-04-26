@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { cloneElement, useState } from 'react'
 import Button from '../components/Button'
 import Card from '../components/Card'
 import Modal from '../components/Modal'
@@ -19,7 +19,7 @@ function DashBoard() {
 
   //just added this line need to use the data from it
   const {data,isLoading,isError}=useQuery({queryKey:["content"],queryFn:GetContent})
-
+  console.log(data)
   return (
     <div className='bg-gray-100 '>
       <Modal isToggle={isToggle} handleToggle={handleToggle}/>
@@ -33,8 +33,12 @@ function DashBoard() {
       </div>
       </div>
       <div className='p-4 flex gap-5 flex-wrap'>
-      <Card type='tweeter'/> 
-      <Card/>
+        {
+          data && data?.contents.map((cur,i)=>(
+            <Card key={i+1} title={cur.title} type={cur.type} link={cur.link} />
+          ))
+        }
+      <Card type='twitter'/> 
       <Card/>
       <Card/>
       <Card/>

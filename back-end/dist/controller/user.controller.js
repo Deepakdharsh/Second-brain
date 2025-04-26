@@ -108,7 +108,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.login = login;
 const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("hello from refresh");
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.status(401).json({ message: "No refresh token" });
