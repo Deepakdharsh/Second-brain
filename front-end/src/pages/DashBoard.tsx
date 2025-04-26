@@ -17,8 +17,9 @@ function DashBoard() {
   }
   const queryClient=useQueryClient()
 
+  //just added this line need to use the data from it
   const {data,isLoading,isError}=useQuery({queryKey:["content"],queryFn:GetContent})
-  
+
   return (
     <div className='bg-gray-100 '>
       <Modal isToggle={isToggle} handleToggle={handleToggle}/>
