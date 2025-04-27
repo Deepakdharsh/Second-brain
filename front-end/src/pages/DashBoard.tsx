@@ -35,16 +35,9 @@ function DashBoard() {
       <div className='p-4 flex gap-5 flex-wrap'>
         {
           data && data?.contents.map((cur,i)=>(
-            <Card key={i+1} title={cur.title} type={cur.type} link={cur.link} />
+            <Card key={i+1} title={cur.title} tags={cur.tags} type={cur.type} link={cur.link} />
           ))
         }
-      <Card type='twitter'/> 
-      <Card/>
-      <Card/>
-      <Card/>
-      <Card/>
-      <Card/>
-      <Card/>
       </div>
       </div>
    </div>

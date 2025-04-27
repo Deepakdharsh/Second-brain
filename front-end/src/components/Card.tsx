@@ -5,11 +5,12 @@ import DeleteIcon from '../icons/DeleteIcon'
 
 interface card{
   title?:string,
-  type?:"youtube"|"tweeter"|"text",
-  link?:string
+  type?:"youtube"|"twitter"|"text",
+  link?:string,
+  tags?:string[]
 }
 
-function Card({title,type,link}:card) {
+function Card({title,type,link,tags}:card) {
   return (
     <div className='flex-[1] min-w-60 max-w-70 bg-white border border-gray-300  shadow-md rounded-sm min-h-64 p-5'>
       <div className='flex justify-between'>
@@ -34,11 +35,14 @@ function Card({title,type,link}:card) {
      
         {
           type === "twitter" && <blockquote className="twitter-tweet">
-          <a href="https://twitter.com/username/status/807811447862468608"></a> 
+          <a href={link}></a> 
         </blockquote>
         }
 
     {/* https://x.com/deepakDotCom_/status/1907850741395632138 */}
+      </div>
+      <div className='bg-red-100 m-1 p-2'>
+        <span>{tags[0].title}</span>
       </div>
     </div>
   )

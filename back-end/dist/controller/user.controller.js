@@ -159,26 +159,29 @@ const createContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         title,
         tags
     });
-    let tag = yield tags_model_1.Tag.findOne({ title });
+    let tag = yield tags_model_1.Tag.find({ title: { $in: tags } });
     if (!tag) {
-        tag = yield tags_model_1.Tag.create({ title });
+        // tag=tags.map((),async=>await Tag.create({title:cur}))
+        //@ts-ignore
+        tag = tags.map((cur) => __awaiter(void 0, void 0, void 0, function* () { return yield tags_model_1.Tag.create({ title: cur }); }));
     }
     console.log(data);
+    console.log(tag);
     if (error) {
         console.log(error);
         return res.status(411).json({ message: "invaild inputs" });
     }
-    const content = yield content_model_1.Content.create({
-        title: data.title,
-        link: data.link,
-        type: data.type,
-        tags: tag._id,
-        userId: userId
-    });
-    console.log(content);
+    //   const content=await Content.create({
+    //     title:data.title,
+    //     link:data.link,
+    //     type:data.type,
+    //     tags:tag._id,
+    //     userId:userId
+    //   })
+    //   console.log(content)
     res.status(201).json({
         message: "content created",
-        content
+        //   content
     });
 });
 exports.createContent = createContent;

@@ -185,32 +185,35 @@ export const createContent=async(req:Request,res:Response)=>{
           tags
       })
 
-      let tag=await Tag.findOne({title})
+      let tag=await Tag.find({title:{$in:tags}})
 
       if(!tag){
-        tag=await Tag.create({title})
+        // tag=tags.map((),async=>await Tag.create({title:cur}))
+        //@ts-ignore
+        tag=tags.map(async(cur)=>await Tag.create({title:cur}))
       }
 
       console.log(data)
+      console.log(tag)
   
       if(error){
           console.log(error)
           return res.status(411).json({message:"invaild inputs"})
       }
   
-      const content=await Content.create({
-        title:data.title,
-        link:data.link,
-        type:data.type,
-        tags:tag._id,
-        userId:userId
-      })
+    //   const content=await Content.create({
+    //     title:data.title,
+    //     link:data.link,
+    //     type:data.type,
+    //     tags:tag._id,
+    //     userId:userId
+    //   })
 
-      console.log(content)
+    //   console.log(content)
   
       res.status(201).json({
           message:"content created",
-          content
+        //   content
       })
 }
 
