@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import CloseIcon from '../icons/CloseIcon'
 import Input from './Input'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { PostContent } from '../api/endPoints'
 import { useNavigate } from 'react-router-dom'
 
@@ -19,11 +19,15 @@ function Modal({isToggle,handleToggle}):any {
     const typeRef=useRef<HTMLInputElement>(null)
     const tagRef=useRef<HTMLInputElement>(null)
 
+    const queryClient=useQueryClient()
+
     const mutation=useMutation({
         mutationFn:PostContent,
         onSuccess:(data)=>{
             console.log("added content")
-            isToggle=false
+            handleToggle()
+            queryClient.invalidateQueries({queryKey:["content"]})
+
         },
         onError:(error)=>{
             console.log(error)
@@ -31,6 +35,11 @@ function Modal({isToggle,handleToggle}):any {
     })
 
     function handleSubmit(){
+
+        // if(titletRef.current?.value.trim()=="" ||linkRef.current?.value.trim()=="" ||typeRef.current?.value.trim()=="" ||tagRef.current?.value.trim()==""){
+        //     return 
+        // }
+
         //@ts-ignore
         console.log(tagRef?.addedtags)
         //@ts-ignore
