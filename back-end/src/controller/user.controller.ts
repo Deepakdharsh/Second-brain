@@ -1,6 +1,6 @@
 import { Response,response } from "express"
 import bcrypt from "bcrypt"
-import z from "zod"
+import z, { promise } from "zod"
 import { User } from "../models/user.model"
 import jwt from "jsonwebtoken"
 import { Content } from "../models/content.model"
@@ -192,41 +192,49 @@ export const createContent=async(req:Request,res:Response)=>{
 
       console.log(tag)
 
+      let TagsIds:any[]=tag.map(cur=>cur._id)
+
       if(tag.length<=0){
-        // tag=tags.map((),async=>await Tag.create({title:cur}))
         //@ts-ignore
         tag=tags.map(async(cur)=>await Tag.create({title:cur}))
-        console.log("hello from if")
-      }else{
-        console.log("hello from else")
+        await Promise.allSettled(tag).then(value=>{
+            //@ts-ignore
+            TagsIds=value.map((cur)=>cur.value._id)
+        })
+      }else if(tag.length!==tags.length){
          //@ts-ignore
         const existingTagNames=tag.map((cur)=>cur.title)
-        console.log(existingTagNames)
         
+        TagsIds=tag.map((cur)=>cur._id)
+
         //@ts-ignore
         const filteredTags=tags.filter((cur)=>!existingTagNames.includes(cur))
-        console.log(filteredTags)
+
+        //@ts-ignore
+        tag=filteredTags.map(async(cur)=>await Tag.create({title:cur}))
+
+        await Promise.allSettled(tag).then(value =>{
+            for(let i=0;i<tag.length;i++){
+                //@ts-ignore
+                TagsIds.push(value[i].value._id)
+            }
+        })
+    }
+  
+      if(error){
+          console.log(error)
+          return res.status(411).json({message:"invaild inputs"})
       }
-
-   
-
-    //   console.log(data)
-    //   console.log(tag)
   
-    //   if(error){
-    //       console.log(error)
-    //       return res.status(411).json({message:"invaild inputs"})
-    //   }
-  
-    //   const content=await Content.create({
-    //     title:data.title,
-    //     link:data.link,
-    //     type:data.type,
-    //     tags:tag._id,
-    //     userId:userId
-    //   })
+      const content=await Content.create({
+        title:data.title,
+        link:data.link,
+        type:data.type,
+        tags:TagsIds,
+        userId:userId
+      })
 
-    //   console.log(content)
+      console.log(content)
   
       res.status(201).json({
           message:"content created",

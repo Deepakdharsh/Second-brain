@@ -163,35 +163,55 @@ const createContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     console.log(data);
     let tag = yield tags_model_1.Tag.find({ title: { $in: tags } });
     console.log(tag);
+    let TagsIds = tag.map(cur => cur._id);
     if (tag.length <= 0) {
         // tag=tags.map((),async=>await Tag.create({title:cur}))
         //@ts-ignore
         tag = tags.map((cur) => __awaiter(void 0, void 0, void 0, function* () { return yield tags_model_1.Tag.create({ title: cur }); }));
         console.log("hello from if");
+        console.log(tag);
+        yield Promise.allSettled(tag).then(value => {
+            console.log(value);
+            //@ts-ignore
+            TagsIds = value.map((cur) => cur.value._id);
+        });
     }
-    else {
+    else if (tag.length !== tags.length) {
         console.log("hello from else");
         //@ts-ignore
         const existingTagNames = tag.map((cur) => cur.title);
         console.log(existingTagNames);
+        TagsIds = tag.map((cur) => cur._id);
         //@ts-ignore
         const filteredTags = tags.filter((cur) => !existingTagNames.includes(cur));
         console.log(filteredTags);
+        //@ts-ignore
+        tag = filteredTags.map((cur) => __awaiter(void 0, void 0, void 0, function* () { return yield tags_model_1.Tag.create({ title: cur }); }));
+        console.log(tag);
+        yield Promise.allSettled(tag).then(value => {
+            console.log(tag);
+            console.log(value);
+            for (let i = 0; i < tag.length; i++) {
+                //@ts-ignore
+                TagsIds.push(value[i].value._id);
+            }
+        });
     }
-    //   console.log(data)
-    //   console.log(tag)
-    //   if(error){
-    //       console.log(error)
-    //       return res.status(411).json({message:"invaild inputs"})
-    //   }
-    //   const content=await Content.create({
-    //     title:data.title,
-    //     link:data.link,
-    //     type:data.type,
-    //     tags:tag._id,
-    //     userId:userId
-    //   })
-    //   console.log(content)
+    console.log("-------");
+    console.log(TagsIds);
+    console.log("------");
+    if (error) {
+        console.log(error);
+        return res.status(411).json({ message: "invaild inputs" });
+    }
+    const content = yield content_model_1.Content.create({
+        title: data.title,
+        link: data.link,
+        type: data.type,
+        tags: TagsIds,
+        userId: userId
+    });
+    console.log(content);
     res.status(201).json({
         message: "content created",
         //   content
