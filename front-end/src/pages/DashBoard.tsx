@@ -1,4 +1,4 @@
-import { cloneElement, useState } from 'react'
+import { useState } from 'react'
 import Button from '../components/Button'
 import Card from '../components/Card'
 import Modal from '../components/Modal'
@@ -33,7 +33,7 @@ function DashBoard() {
       <div className='p-4 flex gap-5 flex-wrap'>
         {
           data && data?.contents.map((cur,i)=>(
-            <Card key={i+1} title={cur.title} tags={cur.tags} type={cur.type} link={cur.link} />
+            <Card key={i+1} title={cur.title} tags={cur.tags} type={cur.type} link={cur.link} id={cur._id}/>
           ))
         }
       </div>

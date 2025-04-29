@@ -23,7 +23,7 @@ function Button(props:buttonProps) {
         "lg":"p-6 py-3"
     }
 
-    const defaultStyles="rounded-md  flex items-center m-1"
+    const defaultStyles="rounded-md  flex items-center m-1 cursor-pointer"
 
   return (
         <button onClick={props.onClick} className={`${variantStyles[props.variant]} ${sizeStyles[props.size]} ${defaultStyles}`}><span className='mr-2'>{props.startIcon}</span>

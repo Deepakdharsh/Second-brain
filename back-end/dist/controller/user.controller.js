@@ -223,8 +223,11 @@ exports.getContent = getContent;
 const deleteContent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const userId = req.userId;
+    console.log(userId);
+    console.log(req.body);
     //@ts-ignore
     const { contentId } = req.body;
+    console.log(req.body);
     const schema = zod_1.default.object({
         contentId: zod_1.default.string(),
     });

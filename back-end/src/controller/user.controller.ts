@@ -263,8 +263,12 @@ export const getContent=async(req:Request,res:Response)=>{
 export const deleteContent=async(req:Request,res:Response)=>{
     //@ts-ignore
     const userId=req.userId
+    console.log(userId)
+    
+    console.log(req.body)
     //@ts-ignore
     const {contentId}=req.body
+    console.log(req.body)
 
     const schema=z.object({
         contentId:z.string(),

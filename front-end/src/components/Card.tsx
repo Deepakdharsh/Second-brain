@@ -1,22 +1,56 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ShareIcons from '../icons/ShareIcons'
 import CopyIcon from '../icons/CopyIcon'
 import DeleteIcon from '../icons/DeleteIcon'
+import { useMutation,useQueryClient } from '@tanstack/react-query'
+import { DeleteContent } from '../api/endPoints'
 
 interface card{
   title?:string,
   type?:"youtube"|"twitter"|"text",
   link?:string,
-  tags?:string[]
+  tags?:string[],
+  id:string
 }
 
-function Card({title,type,link,tags}:card) {
+function Card({title,type,link,tags,id}:card) {
+  const [textData,setTextData]=useState(false)
+  const queryClient=useQueryClient()
+  const mutation=useMutation({
+    mutationFn:DeleteContent,
+    onSuccess:()=>{
+        console.log("content deleted")
+        queryClient.invalidateQueries({queryKey:["content"]})
+
+    },
+    onError:(error)=>{
+        console.log(error)
+    }
+})
+
+  function handleDelete(){
+    mutation.mutate({
+      contentId:id
+    })
+  }
+
+  function handleCopyToClipboard(){
+    const text=type === "youtube"? link.replace("embed/","watch?v=") : link.replace("twitter.com","x.com")
+    if(text){
+      navigator.clipboard.writeText(text).then(()=>{
+        setTextData(true)
+        setTimeout(()=>{
+          setTextData(false)
+        },2000)
+      })
+    }
+  }
   return (
     <div className='flex-[1] min-w-60 max-w-70 bg-white border border-gray-300  shadow-md rounded-sm min-h-64 p-5'>
       <div className='flex justify-between'>
       <div className='flex items-center '>
        <span className='mr-3'>
-      {<CopyIcon />}
+      {<CopyIcon textData={textData} handleCopyToClipboard={handleCopyToClipboard} />}
        </span>
       {title}
       </div>
@@ -24,7 +58,7 @@ function Card({title,type,link,tags}:card) {
         <span className='mr-2'>
       {<ShareIcons size='md'/>}
         </span>
-      {<DeleteIcon />}
+      {<DeleteIcon handleDelete={handleDelete} />}
       </div>
       </div>
       <div className='mt-4'>

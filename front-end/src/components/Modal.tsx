@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router-dom'
 const ForwardedChild=React.forwardRef(Input)
 //@ts-ignore
 function Modal({isToggle,handleToggle}):any {
-    const navigate=useNavigate()
     const titletRef=useRef<HTMLInputElement>(null)
     const linkRef=useRef<HTMLInputElement>(null)
     const typeRef=useRef<HTMLInputElement>(null)

@@ -26,8 +26,8 @@ const GetContent=async()=>{
     return res.data
 }
 
-const DeleteContent=async(id)=>{
-    const res=await api.post("/content",{id})
+const DeleteContent=async(data)=>{
+    const res=await api.delete("/content",data)
     return res.data
 }
 
