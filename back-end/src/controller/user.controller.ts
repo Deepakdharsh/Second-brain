@@ -48,7 +48,7 @@ export const signup=async(req:Request,res:Response)=>{
 
     // const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET,{expiresIn:""})
     
-    const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET as string,{expiresIn:"15m"})
+    const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET as string,{expiresIn:"2d"})
     const refreshToken=jwt.sign({id:newUser._id},process.env.REFRESH_SECRET as string,{expiresIn:"7d"})
 
     res.cookie("refreshToken",refreshToken,{
@@ -102,7 +102,7 @@ export const login=async(req:Request,res:Response)=>{
       //@ts-ignore
     //   const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
 
-    const token=jwt.sign({id:user._id},process.env.JWT_SECRET as string,{expiresIn:"15m"})
+    const token=jwt.sign({id:user._id},process.env.JWT_SECRET as string,{expiresIn:"2d"})
     const refreshToken=jwt.sign({id:user._id},process.env.REFRESH_SECRET as string,{expiresIn:"7d"})
 
     res.cookie("refreshToken",refreshToken,{
@@ -123,6 +123,7 @@ interface jwtRequest extends Request{
 }
 
 export const refresh=async(req:jwtRequest,res:Response)=>{
+    console.log("hello from Refresh controller")
  const refreshToken=req.cookies.refreshToken
  if(!refreshToken){
     return res.status(401).json({message:"No refresh token"})
@@ -185,21 +186,37 @@ export const createContent=async(req:Request,res:Response)=>{
           tags
       })
 
+      console.log(data)
+
       let tag=await Tag.find({title:{$in:tags}})
 
-      if(!tag){
+      console.log(tag)
+
+      if(tag.length<=0){
         // tag=tags.map((),async=>await Tag.create({title:cur}))
         //@ts-ignore
         tag=tags.map(async(cur)=>await Tag.create({title:cur}))
+        console.log("hello from if")
+      }else{
+        console.log("hello from else")
+         //@ts-ignore
+        const existingTagNames=tag.map((cur)=>cur.title)
+        console.log(existingTagNames)
+        
+        //@ts-ignore
+        const filteredTags=tags.filter((cur)=>!existingTagNames.includes(cur))
+        console.log(filteredTags)
       }
 
-      console.log(data)
-      console.log(tag)
+   
+
+    //   console.log(data)
+    //   console.log(tag)
   
-      if(error){
-          console.log(error)
-          return res.status(411).json({message:"invaild inputs"})
-      }
+    //   if(error){
+    //       console.log(error)
+    //       return res.status(411).json({message:"invaild inputs"})
+    //   }
   
     //   const content=await Content.create({
     //     title:data.title,

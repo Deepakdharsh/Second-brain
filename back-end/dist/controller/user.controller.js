@@ -50,7 +50,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         password: hashedPassword,
     });
     // const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET,{expiresIn:""})
-    const token = jsonwebtoken_1.default.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
+    const token = jsonwebtoken_1.default.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "2d" });
     const refreshToken = jsonwebtoken_1.default.sign({ id: newUser._id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -93,7 +93,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     //@ts-ignore
     //   const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
-    const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
+    const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "2d" });
     const refreshToken = jsonwebtoken_1.default.sign({ id: user._id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -108,6 +108,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.login = login;
 const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("hello from Refresh controller");
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.status(401).json({ message: "No refresh token" });
@@ -159,18 +160,30 @@ const createContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         title,
         tags
     });
+    console.log(data);
     let tag = yield tags_model_1.Tag.find({ title: { $in: tags } });
-    if (!tag) {
+    console.log(tag);
+    if (tag.length <= 0) {
         // tag=tags.map((),async=>await Tag.create({title:cur}))
         //@ts-ignore
         tag = tags.map((cur) => __awaiter(void 0, void 0, void 0, function* () { return yield tags_model_1.Tag.create({ title: cur }); }));
+        console.log("hello from if");
     }
-    console.log(data);
-    console.log(tag);
-    if (error) {
-        console.log(error);
-        return res.status(411).json({ message: "invaild inputs" });
+    else {
+        console.log("hello from else");
+        //@ts-ignore
+        const existingTagNames = tag.map((cur) => cur.title);
+        console.log(existingTagNames);
+        //@ts-ignore
+        const filteredTags = tags.filter((cur) => !existingTagNames.includes(cur));
+        console.log(filteredTags);
     }
+    //   console.log(data)
+    //   console.log(tag)
+    //   if(error){
+    //       console.log(error)
+    //       return res.status(411).json({message:"invaild inputs"})
+    //   }
     //   const content=await Content.create({
     //     title:data.title,
     //     link:data.link,
