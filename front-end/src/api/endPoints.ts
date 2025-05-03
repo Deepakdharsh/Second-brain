@@ -26,8 +26,8 @@ const GetContent=async()=>{
     return res.data
 }
 
-const DeleteContent=async(data)=>{
-    const res=await api.delete("/content",data)
+const DeleteContent=async(id)=>{
+    const res=await api.delete("/content",{data:{id}})
     return res.data
 }
 
@@ -37,7 +37,7 @@ const PostTag=async(data)=>{
 }
 
 const PostBrain=async(data)=>{
-    const res=await api.post("/brain/share",{data})
+    const res=await api.post("/brain/share",data)
     return res.data
 }
 

@@ -263,11 +263,9 @@ export const getContent=async(req:Request,res:Response)=>{
 export const deleteContent=async(req:Request,res:Response)=>{
     //@ts-ignore
     const userId=req.userId
-    console.log(userId)
-    
-    console.log(req.body)
     //@ts-ignore
-    const {contentId}=req.body
+    const {id}=req.body
+    const contentId=id.contentId
     console.log(req.body)
 
     const schema=z.object({
@@ -313,10 +311,22 @@ export const createLink=async(req:Request,res:Response)=>{
     }
 
     if(!share){
-    await Link.deleteOne(userId)
+    await Link.deleteOne({userId})
     return res.status(200).json({
         message:"deleted link",
     })
+    }
+
+    const prevLink=await Link.find({userId})
+
+    console.log(prevLink)
+
+
+    if(prevLink.length!=0){
+        return res.status(201).json({
+            link:prevLink[0].hash,
+            isCreated:true
+        })
     }
 
     const randomId=random(6)
@@ -328,6 +338,7 @@ export const createLink=async(req:Request,res:Response)=>{
 
     res.status(201).json({
     message:"Link created",
+    isCreated:true,
     link:linkData.hash
     })
 }

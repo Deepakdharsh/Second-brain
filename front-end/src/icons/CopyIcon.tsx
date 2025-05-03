@@ -1,8 +1,8 @@
 import React from 'react'
 
 interface copyIconType{
-  handleCopyToClipboard:()=>void,
-  textData:boolean
+  handleCopyToClipboard?:()=>void,
+  textData?:boolean
 }
 
 function CopyIcon({textData,handleCopyToClipboard}:copyIconType){

@@ -77,8 +77,8 @@ function Card({title,type,link,tags,id}:card) {
       </div>
       <div className='m-1 p-2'>
         {
-          tags && tags.map((cur)=>{
-            return (<span className='bg-purple-600 text-white pt-0 pb-1 px-3 rounded-[30px] m-1'>{cur.title}</span>)
+          tags && tags.map((cur,i)=>{
+            return (<span key={i+1} className='bg-purple-600 text-white pt-0 pb-1 px-3 rounded-[30px] m-1'>{cur.title}</span>)
           })
         }
       </div>

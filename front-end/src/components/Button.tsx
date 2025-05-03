@@ -4,7 +4,7 @@ type variants= "primary" | "secondary"
 
 interface buttonProps{
     variant:variants,
-    size:"sm"|"md"|"lg",
+    size:"sm"|"md"|"lg"|"xl",
     text:string,
     startIcon?:ReactElement,
     endIcon?:ReactElement,
@@ -14,13 +14,14 @@ interface buttonProps{
 function Button(props:buttonProps) {
     const variantStyles={
         "primary":"bg-purple-600 text-white",
-        "secondary":"bg-purple-300 text-purple-600"
+        "secondary":"bg-purple-300 text-purple-600",
     }
 
     const sizeStyles={
         "sm":"p-2 py-1",
         "md":"p-4 py-2",
-        "lg":"p-6 py-3"
+        "lg":"p-6 py-3",
+        "xl":"px-28 py-3"
     }
 
     const defaultStyles="rounded-md  flex items-center m-1 cursor-pointer"

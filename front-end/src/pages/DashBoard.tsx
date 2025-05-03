@@ -7,6 +7,7 @@ import AddIcon from '../icons/AddIcon'
 import ShareIcons from '../icons/ShareIcons'
 import { useQuery } from '@tanstack/react-query'
 import { GetContent } from '../api/endPoints'
+import ShareModal from '../components/ShareModal'
 
 function DashBoard() {
   const [isToggle,SetIsToggle]=useState(false)
@@ -20,7 +21,7 @@ function DashBoard() {
   console.log(data)
   return (
     <div className='bg-gray-100 '>
-      <Modal isToggle={isToggle} handleToggle={handleToggle}/>
+      {/* <Modal isToggle={isToggle} handleToggle={handleToggle}/>
       <Sidebar/>
       <div className='ml-65 min-h-screen p-7'>
       <div className='flex justify-between items-center mt-3'>
@@ -37,7 +38,8 @@ function DashBoard() {
           ))
         }
       </div>
-      </div>
+      </div> */}
+      <ShareModal/>
    </div>
   )
 }

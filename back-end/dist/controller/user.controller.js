@@ -223,10 +223,9 @@ exports.getContent = getContent;
 const deleteContent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const userId = req.userId;
-    console.log(userId);
-    console.log(req.body);
     //@ts-ignore
-    const { contentId } = req.body;
+    const { id } = req.body;
+    const contentId = id.contentId;
     console.log(req.body);
     const schema = zod_1.default.object({
         contentId: zod_1.default.string(),
@@ -262,9 +261,17 @@ const createLink = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(411).json({ message: "invaild inputs" });
     }
     if (!share) {
-        yield link_model_1.Link.deleteOne(userId);
+        yield link_model_1.Link.deleteOne({ userId });
         return res.status(200).json({
             message: "deleted link",
+        });
+    }
+    const prevLink = yield link_model_1.Link.find({ userId });
+    console.log(prevLink);
+    if (prevLink.length != 0) {
+        return res.status(201).json({
+            link: prevLink[0].hash,
+            isCreated: true
         });
     }
     const randomId = (0, randomString_1.random)(6);
@@ -274,6 +281,7 @@ const createLink = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     });
     res.status(201).json({
         message: "Link created",
+        isCreated: true,
         link: linkData.hash
     });
 });
