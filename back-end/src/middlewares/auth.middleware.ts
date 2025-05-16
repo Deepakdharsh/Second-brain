@@ -7,6 +7,7 @@ export const auth=(req:Request,res:Response,next:NextFunction)=>{
         if(token){
             //@ts-ignore
             const decoded=jwt.verify(token,process.env.JWT_SECRET)
+            console.log(decoded,"from the auth middleware")
             if(!decoded){
                 return res.status(401).json({
                     message:"invaild token"

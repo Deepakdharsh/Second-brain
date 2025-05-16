@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LinkShare = exports.createLink = exports.deleteContent = exports.getContent = exports.createContent = exports.createTag = exports.refresh = exports.login = exports.signup = void 0;
+exports.authenticateToken = exports.logout = exports.LinkShare = exports.createLink = exports.deleteContent = exports.getContent = exports.createContent = exports.createTag = exports.refresh = exports.login = exports.signup = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const zod_1 = __importDefault(require("zod"));
 const user_model_1 = require("../models/user.model");
@@ -21,6 +21,16 @@ const content_model_1 = require("../models/content.model");
 const randomString_1 = require("../utils/randomString");
 const link_model_1 = require("../models/link.model");
 const tags_model_1 = require("../models/tags.model");
+//@ts-ignore
+function generateAccessToken(user) {
+    const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
+    return token;
+}
+//@ts-ignore
+function generateRefreshToken(user) {
+    const refreshToken = jsonwebtoken_1.default.sign({ id: user._id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+    return refreshToken;
+}
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const { username, email, password } = req.body;
@@ -50,8 +60,8 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         password: hashedPassword,
     });
     // const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET,{expiresIn:""})
-    const token = jsonwebtoken_1.default.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "2d" });
-    const refreshToken = jsonwebtoken_1.default.sign({ id: newUser._id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+    const token = generateAccessToken(newUser);
+    const refreshToken = generateRefreshToken(newUser);
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV == "production" ? true : false,
@@ -93,8 +103,8 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     //@ts-ignore
     //   const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
-    const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "2d" });
-    const refreshToken = jsonwebtoken_1.default.sign({ id: user._id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+    const token = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV == "production" ? true : false,
@@ -108,21 +118,32 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.login = login;
 const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("hello from Refresh controller");
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
-        return res.status(401).json({ message: "No refresh token" });
-    }
-    jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({
-                message: "Invaild refresh token"
-            });
+    try {
+        const refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) {
+            console.log("refreshToken is not vaild :", refreshToken);
+            return res.status(401).json({ message: "No refresh token" });
         }
-        //@ts-ignore
-        const token = jsonwebtoken_1.default.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "15m" });
-        res.json({ token });
-    });
+        jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
+            if (err) {
+                console.log(err);
+                return res.status(403).json({
+                    message: "Invaild refresh token"
+                });
+            }
+            console.log(user, "from the refresh");
+            //@ts-ignore
+            const token = jsonwebtoken_1.default.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "2d" });
+            console.log("generated token :", token);
+            res.json({ token });
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.json(500).json({
+            message: "something went wrong"
+        });
+    }
 });
 exports.refresh = refresh;
 const createTag = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -246,44 +267,52 @@ const deleteContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.deleteContent = deleteContent;
 const createLink = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //@ts-ignore
-    const userId = req.userId;
-    //@ts-ignore
-    const { share } = req.body;
-    const schema = zod_1.default.object({
-        share: zod_1.default.boolean(),
-    });
-    const { data, error } = schema.safeParse({
-        share
-    });
-    if (error) {
-        console.log(error);
-        return res.status(411).json({ message: "invaild inputs" });
-    }
-    if (!share) {
-        yield link_model_1.Link.deleteOne({ userId });
-        return res.status(200).json({
-            message: "deleted link",
+    try {
+        //@ts-ignore
+        const userId = req.userId;
+        //@ts-ignore
+        const { share } = req.body;
+        const schema = zod_1.default.object({
+            share: zod_1.default.boolean(),
+        });
+        const { data, error } = schema.safeParse({
+            share
+        });
+        if (error) {
+            console.log(error);
+            return res.status(411).json({ message: "invaild inputs" });
+        }
+        if (!share) {
+            yield link_model_1.Link.deleteOne({ userId });
+            return res.status(200).json({
+                message: "deleted link",
+            });
+        }
+        const prevLink = yield link_model_1.Link.find({ userId });
+        console.log(prevLink);
+        if (prevLink.length != 0) {
+            return res.status(201).json({
+                link: prevLink[0].hash,
+                isCreated: true
+            });
+        }
+        const randomId = (0, randomString_1.random)(6);
+        const linkData = yield link_model_1.Link.create({
+            hash: randomId,
+            userId
+        });
+        res.status(201).json({
+            message: "Link created",
+            isCreated: true,
+            link: linkData.hash
         });
     }
-    const prevLink = yield link_model_1.Link.find({ userId });
-    console.log(prevLink);
-    if (prevLink.length != 0) {
-        return res.status(201).json({
-            link: prevLink[0].hash,
-            isCreated: true
+    catch (error) {
+        console.log("something went wrong at createLink controller :", error);
+        res.json(500).json({
+            message: "something went wrong"
         });
     }
-    const randomId = (0, randomString_1.random)(6);
-    const linkData = yield link_model_1.Link.create({
-        hash: randomId,
-        userId
-    });
-    res.status(201).json({
-        message: "Link created",
-        isCreated: true,
-        link: linkData.hash
-    });
 });
 exports.createLink = createLink;
 const LinkShare = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -312,3 +341,17 @@ const LinkShare = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 exports.LinkShare = LinkShare;
+const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken)
+        return res.status(204).json({ message: "something went wrong" });
+    res.clearCookie('refreshToken');
+    res.status(204).json({
+        message: "logout successfull"
+    });
+});
+exports.logout = logout;
+const authenticateToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.json({ message: "Protected data" });
+});
+exports.authenticateToken = authenticateToken;

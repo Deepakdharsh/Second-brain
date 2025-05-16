@@ -11,9 +11,12 @@ import ShareModal from '../components/ShareModal'
 
 function DashBoard() {
   const [isToggle,SetIsToggle]=useState(false)
+  const [isShareToggle,SetisShareToggle]=useState(false)
   function handleToggle(){
     SetIsToggle(state=>!state)
-    console.log("hello from state")
+  }
+  function handleShareToggle(){
+    SetisShareToggle(state=>!state)
   }
 
   //just added this line need to use the data from it
@@ -21,13 +24,14 @@ function DashBoard() {
   console.log(data)
   return (
     <div className='bg-gray-100 '>
-      {/* <Modal isToggle={isToggle} handleToggle={handleToggle}/>
+      <Modal isToggle={isToggle} handleToggle={handleToggle}/>
+      <ShareModal isToggle={isShareToggle} handleToggle={handleShareToggle}/>
       <Sidebar/>
       <div className='ml-65 min-h-screen p-7'>
       <div className='flex justify-between items-center mt-3'>
       <h2 className='text-2xl font-semibold'>All Notes</h2>
       <div className='flex'>
-      <Button size='lg' variant='secondary' text='Share brain' startIcon={<ShareIcons size='lg'/>}/>
+      <Button onClick={handleShareToggle} size='lg' variant='secondary' text='Share brain' startIcon={<ShareIcons size='lg'/>}/>
       <Button onClick={handleToggle} size='lg' variant='primary' text='Add Content' startIcon={<AddIcon size="lg" />}/>
       </div>
       </div>
@@ -38,8 +42,7 @@ function DashBoard() {
           ))
         }
       </div>
-      </div> */}
-      <ShareModal/>
+      </div>
    </div>
   )
 }

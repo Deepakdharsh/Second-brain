@@ -1,19 +1,21 @@
-import React,{useRef} from 'react'
+import React,{useContext, useRef} from 'react'
 import Input from './Input'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { PostSignup } from '../api/endPoints'
 import { useNavigate } from 'react-router-dom'
+import { Authcontext, useAuth } from '../context/AuthProvider'
 
 const ForwardRef=React.forwardRef(Input)
 
 function Signup() {
+  const {setAccessToken}=useContext(Authcontext)
   const queryClient=useQueryClient()
   const navigate=useNavigate()
 
   const mutation=useMutation({
     mutationFn:PostSignup,
     onSuccess:(data)=>{
-      console.log(data.token)
+      setAccessToken(data.token)
       localStorage.setItem("token",data.token)
       navigate("/dashboard")
     },

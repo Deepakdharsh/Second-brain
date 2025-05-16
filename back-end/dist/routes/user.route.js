@@ -30,3 +30,7 @@ UserRouter.delete("/content", auth_middleware_1.auth, user_controller_1.deleteCo
 UserRouter.post("/brain/share", auth_middleware_1.auth, user_controller_1.createLink);
 //@ts-ignore
 UserRouter.get("/brain/:sharelink", user_controller_1.LinkShare);
+//@ts-ignore
+UserRouter.post("/logout", user_controller_1.logout);
+//@ts-ignore
+UserRouter.get("/protected", auth_middleware_1.auth, user_controller_1.authenticateToken);

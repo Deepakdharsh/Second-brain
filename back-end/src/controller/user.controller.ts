@@ -1,12 +1,25 @@
-import { Response,response } from "express"
+import { Request, Response } from "express"
 import bcrypt from "bcrypt"
-import z, { promise } from "zod"
+import z from "zod"
 import { User } from "../models/user.model"
 import jwt from "jsonwebtoken"
 import { Content } from "../models/content.model"
 import { random } from "../utils/randomString"
 import { Link } from "../models/link.model"
 import { Tag } from "../models/tags.model"
+
+//@ts-ignore
+function generateAccessToken(user){
+    const token=jwt.sign({id:user._id},process.env.JWT_SECRET as string,{expiresIn:"15m"})
+    return token
+}
+
+//@ts-ignore
+function generateRefreshToken(user){
+    const refreshToken=jwt.sign({id:user._id},process.env.REFRESH_SECRET as string,{expiresIn:"7d"})
+    return refreshToken
+}
+
 
 export const signup=async(req:Request,res:Response)=>{
     //@ts-ignore
@@ -48,8 +61,8 @@ export const signup=async(req:Request,res:Response)=>{
 
     // const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET,{expiresIn:""})
     
-    const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET as string,{expiresIn:"2d"})
-    const refreshToken=jwt.sign({id:newUser._id},process.env.REFRESH_SECRET as string,{expiresIn:"7d"})
+    const token=generateAccessToken(newUser)
+    const refreshToken=generateRefreshToken(newUser)
 
     res.cookie("refreshToken",refreshToken,{
         httpOnly:true,
@@ -102,8 +115,8 @@ export const login=async(req:Request,res:Response)=>{
       //@ts-ignore
     //   const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
 
-    const token=jwt.sign({id:user._id},process.env.JWT_SECRET as string,{expiresIn:"2d"})
-    const refreshToken=jwt.sign({id:user._id},process.env.REFRESH_SECRET as string,{expiresIn:"7d"})
+    const token=generateAccessToken(user)
+    const refreshToken=generateRefreshToken(user)
 
     res.cookie("refreshToken",refreshToken,{
         httpOnly:true,
@@ -123,22 +136,32 @@ interface jwtRequest extends Request{
 }
 
 export const refresh=async(req:jwtRequest,res:Response)=>{
-    console.log("hello from Refresh controller")
- const refreshToken=req.cookies.refreshToken
- if(!refreshToken){
-    return res.status(401).json({message:"No refresh token"})
- }
-
- jwt.verify(refreshToken,process.env.REFRESH_SECRET as string,(err,user)=>{
-    if(err){
-        return res.status(403).json({
-            message:"Invaild refresh token"
-        })
-    }
-    //@ts-ignore
-    const token=jwt.sign({id:user.id},process.env.JWT_SECRET as string,{expiresIn:"15m"})
-    res.json({token})
- })
+try {
+     const refreshToken=req.cookies.refreshToken
+     if(!refreshToken){
+        console.log("refreshToken is not vaild :",refreshToken)
+        return res.status(401).json({message:"No refresh token"})
+     }
+    
+     jwt.verify(refreshToken,process.env.REFRESH_SECRET as string,(err,user)=>{
+        if(err){
+            console.log(err)
+            return res.status(403).json({
+                message:"Invaild refresh token"
+            })
+        }
+        console.log(user,"from the refresh")
+        //@ts-ignore
+        const token=jwt.sign({id:user.id},process.env.JWT_SECRET as string,{expiresIn:"2d"})
+        console.log("generated token :",token)
+        res.json({token})
+    })
+} catch (error) {
+    console.log(error)
+    res.json(500).json({
+        message:"something went wrong"
+    })
+}
 }
 
 export const createTag=async(req:Request,res:Response)=>{
@@ -292,55 +315,62 @@ export const deleteContent=async(req:Request,res:Response)=>{
 }
 
 export const createLink=async(req:Request,res:Response)=>{
-    //@ts-ignore
-    const userId=req.userId
-    //@ts-ignore
-    const {share}=req.body
-
-    const schema=z.object({
-        share:z.boolean(),
-    })
-
-    const {data,error}=schema.safeParse({
-        share
-    })
-
-    if(error){
-        console.log(error)
-        return res.status(411).json({message:"invaild inputs"})
-    }
-
-    if(!share){
-    await Link.deleteOne({userId})
-    return res.status(200).json({
-        message:"deleted link",
-    })
-    }
-
-    const prevLink=await Link.find({userId})
-
-    console.log(prevLink)
-
-
-    if(prevLink.length!=0){
-        return res.status(201).json({
-            link:prevLink[0].hash,
-            isCreated:true
+    try {
+        //@ts-ignore
+        const userId=req.userId
+        //@ts-ignore
+        const {share}=req.body
+    
+        const schema=z.object({
+            share:z.boolean(),
+        })
+    
+        const {data,error}=schema.safeParse({
+            share
+        })
+    
+        if(error){
+            console.log(error)
+            return res.status(411).json({message:"invaild inputs"})
+        }
+    
+        if(!share){
+        await Link.deleteOne({userId})
+        return res.status(200).json({
+            message:"deleted link",
+        })
+        }
+    
+        const prevLink=await Link.find({userId})
+    
+        console.log(prevLink)
+    
+    
+        if(prevLink.length!=0){
+            return res.status(201).json({
+                link:prevLink[0].hash,
+                isCreated:true
+            })
+        }
+    
+        const randomId=random(6)
+    
+        const linkData=await Link.create({
+        hash:randomId,
+        userId
+        })
+    
+        res.status(201).json({
+        message:"Link created",
+        isCreated:true,
+        link:linkData.hash
+        })
+    } catch (error) {
+        console.log("something went wrong at createLink controller :",error)
+        res.json(500).json({
+            message:"something went wrong"
         })
     }
-
-    const randomId=random(6)
-
-    const linkData=await Link.create({
-    hash:randomId,
-    userId
-    })
-
-    res.status(201).json({
-    message:"Link created",
-    isCreated:true,
-    link:linkData.hash
-    })
 }
 
 export const LinkShare=async(req:Request,res:Response)=>{
@@ -374,4 +404,18 @@ export const LinkShare=async(req:Request,res:Response)=>{
     res.status(201).json({
         contents
     })
+}
+
+export const logout=async(req:Request,res:Response)=>{
+    const refreshToken=req.cookies.refreshToken
+    if(!refreshToken) return res.status(204).json({message:"something went wrong"})
+
+    res.clearCookie('refreshToken');
+    res.status(204).json({
+        message:"logout successfull"
+    });
+}
+
+export const authenticateToken=async(req:Request,res:Response)=>{
+    res.json({message:"Protected data"})
 }

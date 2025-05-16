@@ -13,7 +13,7 @@ function Input({placeholder,type="text",isTag}:input,ref:React.Ref<HTMLInputElem
     useEffect(()=>{
         //@ts-ignore
         ref.current.value=""
-        console.log(value)
+        // console.log(value)
         ref.addedtags=value
     },[value])
     
