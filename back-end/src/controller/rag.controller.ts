@@ -24,7 +24,7 @@ export const rag=async(req:Request,res:Response)=>{
                 metadata: {text}
               },
             ]
-        
+         
     
         const index=pc.index(indexName)
         //@ts-ignore
