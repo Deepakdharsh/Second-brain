@@ -11,7 +11,9 @@ const rag_controller_1 = require("../controller/rag.controller");
 const UserRouter = express_1.default.Router();
 exports.UserRouter = UserRouter;
 //@ts-ignore
-UserRouter.post("/rag", rag_controller_1.rag);
+UserRouter.post("/rag", auth_middleware_1.auth, rag_controller_1.rag);
+//@ts-ignore
+UserRouter.get("/scrape", auth_middleware_1.auth, rag_controller_1.reply);
 //@ts-ignore
 UserRouter.post("/signup", user_controller_1.signup);
 //@ts-ignore

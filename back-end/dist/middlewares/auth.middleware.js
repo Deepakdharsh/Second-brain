@@ -11,7 +11,7 @@ const auth = (req, res, next) => {
         if (token) {
             //@ts-ignore
             const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-            console.log(decoded, "from the auth middleware");
+            // console.log(decoded,"from the auth middleware")
             if (!decoded) {
                 return res.status(401).json({
                     message: "invaild token"

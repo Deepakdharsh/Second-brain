@@ -3,15 +3,22 @@ import { Authcontext, useAuth } from "../context/AuthProvider"
 import { Children, useContext, useEffect } from "react"
 
 function ProtectedRoute({children}) {
-    const {accessToken}=useContext(Authcontext)
+    const {accessToken,setAccessToken}=useContext(Authcontext)
 
     const navigate=useNavigate()
 
     useEffect(()=>{
-        if(!accessToken){
+        const token=localStorage.getItem("token")
+        if(token){
+            setAccessToken(token)
+        }
+
+        if(!accessToken && !token){
             navigate("/signin")
         }
-    },[accessToken,navigate])
+
+
+    },[accessToken,navigate,setAccessToken])
   return accessToken ? children : null
 }
 

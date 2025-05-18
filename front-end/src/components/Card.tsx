@@ -46,7 +46,7 @@ function Card({title,type,link,tags,id}:card) {
     }
   }
   return (
-    <div className='flex-[1] min-w-60 max-w-70 bg-white border border-gray-300  shadow-md rounded-sm min-h-64 p-5'>
+    <div  className='content-card flex-[1] min-w-60 max-w-70 bg-white border border-gray-300  shadow-md rounded-sm min-h-64 p-5'>
       <div className='flex justify-between'>
       <div className='flex items-center '>
        <span className='mr-3'>

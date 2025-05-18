@@ -1,11 +1,13 @@
 import express from "express"
 import { login,signup,createContent,getContent,deleteContent,createLink,createTag,LinkShare, refresh, logout, authenticateToken } from "../controller/user.controller"
 import { auth } from "../middlewares/auth.middleware"
-import { rag } from "../controller/rag.controller"
+import { rag, reply} from "../controller/rag.controller"
 
 const UserRouter=express.Router()
 //@ts-ignore
-UserRouter.post("/rag",rag)
+UserRouter.post("/rag",auth,rag)
+//@ts-ignore
+UserRouter.get("/scrape",auth,reply)
 //@ts-ignore
 UserRouter.post("/signup",signup)
 //@ts-ignore

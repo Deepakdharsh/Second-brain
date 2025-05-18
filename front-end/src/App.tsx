@@ -15,7 +15,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
     <Router>
       <Routes>
-        <Route index element={<Navigate to="/signup"/>}/>
+        <Route index element={<Navigate to="/dashboard"/>}/>
         <Route path='/signup' element={<Signup/>}/>
         <Route path='/signin' element={<SignIn/>}/>
         <Route path='/dashboard' element={<ProtectedRoute><DashBoard/></ProtectedRoute>}/>
