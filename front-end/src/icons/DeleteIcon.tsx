@@ -11,5 +11,5 @@ function DeleteIcon({handleDelete}:DeleteType) {
     </svg>
   )
 }
-
+ 
 export default DeleteIcon
